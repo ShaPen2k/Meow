@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Записи</title>
+</head>
+<body>
+    <style>
+        body{
+           font-family: Georgia, 'Times New Roman', Times, serif;
+        }
+        h2{
+          margin-left: 95px;
+        }
+        textarea{
+          width: 300px; 
+          height: 220px;
+          font-size: 18px;
+          padding: 20px;
+          border-radius: 5px;
+          
+        }
+        button{
+          width: 120px;
+          height: 40px;
+          background: #faf89b;
+          font-weight: 600;
+          margin-left: 100px;
+          border-radius: 5px;
+        }
+        .red {
+          color: rgb(163, 1, 1);
+        }
+        ul{
+          width: 350px; 
+        }
+        .record_frame{
+          width: 300px; 
+          height: 220px;
+          border: solid black 1px;
+          border-radius: 5px;
+          margin-bottom: 20px;
+          padding: 20px;
+        }
+        .record_frame_text{
+          max-width: 320px; 
+          word-wrap:break-word;
+          
+        }
+        .record_frame_date{
+          width: 150px;
+          height: 30px;
+          margin: 0;
+          float:right;
+        }
+    </style>
+    <div id="app">
+        <form>
+          <h2>Ваша запись</h2>
+          <textarea type="text" v-model="newRecord"></textarea><br>
+          <p v-show="newRecord" v-bind:class="changeColor">
+            {{ newRecord.length }}/{{ maxCharacters }}
+          </p>
+          <button v-on:click="addRecord" v-bind:disabled="!newRecord || newRecord.length > maxCharacters">Добавить</button>
+        </form>
+        
+        <h2 v-show="records.length == 1">Запись </h2>
+        <h2 v-show="records.length > 1">Запись {{ records.length }}</h2>
+        
+            <div class="record_frame" v-for="record in records" :key="record.id">
+              <p class="record_frame_text">{{ record.text }}</p>
+              <p class="record_frame_date">{{ record.date }}</p>
+            </div>
+
+      </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.0.5/vue.min.js"></script>
+    <script>
+   new Vue({
+    el: '#app',
+    data: {
+    newRecord: '',
+    maxCharacters: 150,
+    records: []
+  },
+  methods: {
+    addRecord: function() {
+      if (this.newRecord.length > this.maxCharacters) {
+        return;
+      }
+      var arr = {
+        id: Date.now(),
+        text: this.newRecord,
+        date: new Intl.DateTimeFormat('ru', {year: "numeric", month: "numeric", day: "numeric", hour: "numeric", minute: "numeric"}).format(Date.now())
+      };
+
+      this.records.push(arr);
+      this.newRecord = '';
+    }
+  },
+  computed: {
+    chars: function() {
+      return this.maxCharacters - this.newRecord.length;
+    },
+    changeColor: function() {
+      if (this.chars < 0) {
+        return "red";
+      } 
+      else {
+        return "";
+      }
+    }
+  }
+});
+    </script>
+</body>
+</html>
